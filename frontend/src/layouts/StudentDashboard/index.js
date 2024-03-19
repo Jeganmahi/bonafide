@@ -107,9 +107,7 @@ function StudentDashboard() {
           </Grid>
         </Grid>
       </MDBox>
-      <button onClick={()=>{
-          console.log(role)
-      }}>click</button>
+      
     </DashboardLayout>
   );
 }

@@ -1,34 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import IconButton from '@mui/material/IconButton';
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
-import MDBadge from "components/MDBadge";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import MDButton from "components/MDButton";
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import DeleteIcon from '@material-ui/icons/Delete';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import InfoIcon from '@material-ui/icons/Info';
 import CheckIcon from '@material-ui/icons/Check';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useSession } from 'SessionContext';
-import { useMediaQuery } from '@mui/material';
 import Swal from 'sweetalert2';
 function StaffTable() {
   const { name, pass } = useSession();
@@ -55,11 +44,11 @@ function StaffTable() {
       }
     };
     FetchDept();
-  }, []);
+  }, [dept]);
 
   useEffect(() => {
     tableDataFetch(); // Call tableDataFetch when dept changes
-  }, [dept]); // Add dept as a dependency
+  }, [tableData]); // Add dept as a dependency
 
   const tableDataFetch = async () => {
     console.log(dept);
@@ -87,10 +76,10 @@ function StaffTable() {
         try {
           const response = await fetch(`http://localhost:5001/acceptData/${uid}`);
           const jsondata = await response.json();
-          tableDataFetch();
+          // tableDataFetch();
           Swal.fire(
-            'Deleted!',
-            'Bonafide  has been deleted.',
+            'accepted',
+            'Bonafide accepted.',
             'success'
           );
         } catch (error) {
