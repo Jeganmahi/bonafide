@@ -207,7 +207,7 @@ function Tables() {
               {({ loading }) =>
                 loading ? "Loading document..." : "Download now!"
               }
-              <GetAppIcon />
+              <MDButton color="success"><GetAppIcon /></MDButton>
             </PDFDownloadLink>
             {/* <div hidden>
               <MyDocument uid={uid}></MyDocument>
