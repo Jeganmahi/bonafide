@@ -22,13 +22,14 @@ import MDButton from "components/MDButton";
 import Stack from '@mui/material/Stack';
 // Authentication layout components
 import BasicLayout from "layouts/authentication/components/BasicLayout";
-// import { useSession } from " SessionContext";
+
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { Tabs, Tab, Divider } from '@mui/material';
 import tab from "assets/theme-dark/components/tabs/tab";
-import { useSession } from " SessionContext";
+import { useSession } from "SessionContext";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 function Signin() {
   const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
@@ -53,13 +54,22 @@ function Signin() {
         },
         body: JSON.stringify(LoginData),
       });
+      console.log("signing in as staff")
       const res=await response.json();
       if(res.success===true){
-        alert("success")
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'login success!',
+        });
         navigate('/staffDashboard');
       }
       else{
-        alert("fail")
+        Swal.fire({
+          icon: 'error',
+          title: 'error',
+          text: 'login failed',
+        });
       }
     } catch (error) {
       console.log(error);
@@ -71,7 +81,10 @@ function Signin() {
       uname:name,
       pass:pass
     };  
-    setRole("student");
+    setRole((prev)=>{
+      console.log("student set state");
+      return "student"
+    });
 
     console.log(LoginData);
 
@@ -83,13 +96,23 @@ function Signin() {
         },
         body: JSON.stringify(LoginData),
       });
+      console.log("signing in as student",role)
+
       const res=await response.json();
       if(res.success===true){
-        alert("success")
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Login success!',
+        });
         navigate('/dashboard');
       }
       else{
-        alert("fail")
+        Swal.fire({
+          icon: 'error',
+          title: 'error',
+          text: 'Login fail!',
+        });
       }
     } catch (error) {
       console.log(error);

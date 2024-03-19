@@ -256,7 +256,6 @@ app.get('/bonafideTable/:dept', (req, res) => {
 //student bonafide table
 app.get('/StudentBonafideTable/:id', (req, res) => {  
   const dept=req.params.id
-  console.log("hi")
   const sqlQuery = 'SELECT * FROM bonafide2 WHERE id=?';
   const values=[dept];  
   db.query(sqlQuery, values,(err, results) => {
@@ -264,7 +263,6 @@ app.get('/StudentBonafideTable/:id', (req, res) => {
       console.log(err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    console.log(results)
     return res.json(results);
   });
 });

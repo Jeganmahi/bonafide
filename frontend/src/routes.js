@@ -55,34 +55,34 @@ const routes = [
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
     component: <StudentDashboard />,
+    role: "student",
   },
   {
     type: "collapse",
-    name: "Bonafide ",
+    name: "Bonafide",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/studentTable",
     component: <Tables />,
+    role: "student",
   },
   {
     type: "collapse",
-    name: "Bonafide Requests ",
+    name: "Bonafide Requests",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/staffTable",
     component: <StaffTable />,
+    role: "staff",
   },
-
- 
- 
-
   {
     type: "collapse",
-    name: "Sign In",
+    name: "Sign In", // Common for all users
     key: "sign-in",
     icon: <Icon fontSize="small">login</Icon>,
     route: "/authentication/sign-in",
     component: <SignIn />,
+
   },
   {
     type: "collapse",
@@ -91,7 +91,9 @@ const routes = [
     icon:  <Icon fontSize="small">dashboard</Icon>,
     route: "/staffDashboard",
     component: <StaffDashboard />,
+    role: "staff",
   },
 ];
 
 export default routes;
+

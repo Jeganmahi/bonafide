@@ -25,11 +25,20 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import InfoIcon from '@material-ui/icons/Info';
-import { useSession } from " SessionContext";
+import { useSession } from "SessionContext";
 import jsPDF from 'jspdf';
+import { Yard } from '@mui/icons-material';
+import Alert from '@mui/material/Alert'; // Import Material-UI Alert
+import AlertTitle from '@mui/material/AlertTitle'; // Import Material-UI AlertTitle
+import { fabClasses } from '@mui/material';
+import Swal from 'sweetalert2';
+import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
+import { MyDocument } from "Document";
+
 
 function Tables() {
   const { name, pass } = useSession();
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [tableData, setTableData] = useState([]);
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
@@ -50,19 +59,32 @@ function Tables() {
 
   useEffect(() => {
     const tableDataFetch = async () => {
-      
+
       try {
         const response = await fetch(`http://localhost:5001/StudentBonafideTable/${name}`);
         const jsondata = await response.json();
         setTableData(jsondata);
-        console.log(tableData)
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
     };
     tableDataFetch();
   }, []);
-  
+  useEffect(() => {
+    const tableDataFetch = async () => {
+
+      try {
+        const response = await fetch(`http://localhost:5001/StudentBonafideTable/${name}`);
+        const jsondata = await response.json();
+        setTableData(jsondata);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+    tableDataFetch();
+  }, []);
+
+
   const tableDataFetch = async () => {
     try {
       const response = await fetch(`http://localhost:5001/bonafideTable/${name}`);
@@ -79,7 +101,6 @@ function Tables() {
       try {
         const response = await fetch(`http://localhost:5001/fetchData/${name}`);
         const jsondata = await response.json();
-        console.log(jsondata);
         setData(jsondata);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -87,61 +108,86 @@ function Tables() {
     };
     fetchData();
   }, []);
-  
+
   const handleView = async (uid) => {
     try {
       const response = await fetch(`http://localhost:5001/particularRow/${uid}`);
       const jsondata = await response.json();
       console.log(jsondata)
       setRowdata(jsondata) // Update rowData state here
-      console.log(setRowdata)
+
       setModal1(true);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-  const [downloadData,setDownloaddata]=useState([]);
-  const handleDownload = async (uid) => {
-    try {
-        const response = await fetch(`http://localhost:5001/particularRow/${uid}`);
-        const jsondata = await response.json();
-        setDownloaddata(jsondata); 
-        
-        
-        const doc = new jsPDF();
-        
-        // Set margins
-        const margin = 10;
-        const textX = margin;
-        const textY = margin;
-        const maxWidth = doc.internal.pageSize.getWidth() - 2 * margin;
-        
-        // Draw margin rectangle in blue color
-        doc.setDrawColor(0, 0, 255); // Blue color
-        doc.rect(margin, margin, maxWidth, doc.internal.pageSize.getHeight() - 2 * margin, 'D');
-        
-        // Print fetched data
-        const formattedData = JSON.stringify(downloadData);
-        const lines = doc.splitTextToSize(formattedData, maxWidth);
-        doc.text(lines, textX, textY);
-        
-        // Save PDF
-        doc.save("downloaded_data.pdf");
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-};
+  const [downloadData, setDownloaddata] = useState([]);
+  // const handleDownload = async (uid) => {
+  //   try {
+  //     const response = await fetch(`http://localhost:5001/particularRow/${uid}`);
+  //     const jsondata = await response.json();
+  //     setDownloaddata(jsondata);
+  //     console.log(downloadData);
+
+
+  //     // const doc = new jsPDF();
+
+  //     // // Set margins
+  //     // const margin = 10;
+  //     // const textX = margin;
+  //     // const textY = margin;
+  //     // const maxWidth = doc.internal.pageSize.getWidth() - 2 * margin;
+
+  //     // // Draw margin rectangle in blue color
+  //     // doc.setDrawColor(0, 0, 255); // Blue color
+  //     // doc.rect(margin, margin, maxWidth, doc.internal.pageSize.getHeight() - 2 * margin, 'D');
+
+  //     // // Print fetched data
+  //     // const formattedData = JSON.stringify(downloadData);
+  //     // const lines = doc.splitTextToSize(formattedData, maxWidth);
+  //     // doc.text(lines, textX, textY);
+
+  //     // // Save PDF
+  //     // doc.save("downloaded_data.pdf");
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // };
 
 
   const handleDelete = async (uid) => {
-    try {
-      const response = await fetch(`http://localhost:5001/rowDelete/${uid}`);
-      const jsondata = await response.json();
-      tableDataFetch();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this request!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`http://localhost:5001/rowDelete/${uid}`);
+          const jsondata = await response.json();
+          tableDataFetch();
+          Swal.fire(
+            'Deleted!',
+            'Bonafide  has been deleted.',
+            'success'
+          );
+        } catch (error) {
+          console.error('Error deleting data:', error);
+          Swal.fire(
+            'Error!',
+            'An error occurred while deleting the request.',
+            'error'
+          );
+        }
+      }
+    });
   };
+  const [downloadUid, setDownloadUid] = useState(null);
 
 
   const checkButton = (status, uid) => {
@@ -157,7 +203,15 @@ function Tables() {
         return (
           <MDBox>
             <MDButton color="info" onClick={() => handleView(uid)} ><VisibilityIcon /></MDButton>
-            <MDButton color="success" onClick={() => handleDownload(uid)}><GetAppIcon /></MDButton>
+            <PDFDownloadLink document={<MyDocument uid={uid} />} fileName="somename5.pdf">
+              {({ loading }) =>
+                loading ? "Loading document..." : "Download now!"
+              }
+              <GetAppIcon />
+            </PDFDownloadLink>
+            {/* <div hidden>
+              <MyDocument uid={uid}></MyDocument>
+            </div> */}
           </MDBox>
         );
       default:
@@ -171,12 +225,14 @@ function Tables() {
 
 
   const columns = [
+    { Header: "SNo.", accessor: "no", align: "left" }, // Updated to "no" instead of "no."
     { Header: "Name", accessor: "name", align: "left" },
     { Header: "Purpose", accessor: "purpose", align: "center" },
-    { Header: "applied on", accessor: "applied", align: "center" },
-    { Header: "status", accessor: "status", align: "center" },
-    { Header: "action", accessor: "action", align: "center" },
+    { Header: "Applied On", accessor: "applied", align: "center" },
+    { Header: "Status", accessor: "status", align: "center" },
+    { Header: "Action", accessor: "action", align: "center" },
   ];
+
 
   const checkColor = (status) => {
     if (status === "accepted") {
@@ -188,7 +244,8 @@ function Tables() {
     }
   }
 
-  const rows = tableData.map(data => ({
+  const rows = tableData.map((data, index) => ({
+    no: index + 1, // Serial number
     name: data.fname,
     purpose: data.purpose,
     applied: data.applydate,
@@ -232,7 +289,18 @@ function Tables() {
         body: JSON.stringify(formData),
       });
       const result = await response.json();
-      alert("success");
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Bonafide Applied Successfully!',
+      });
+      setModal(false);
+      setAcademicyear("");
+      setYear("");
+      setPurpose("");
+      tableDataFetch();
+
+
     } catch (error) {
       console.log(error);
     }
@@ -271,6 +339,21 @@ function Tables() {
   }
 
 
+  const checkApplyButton = () => {
+    const isButtonVisible = academicYear && year && purpose;
+
+    return (
+      <>
+        {isButtonVisible && (
+          <MDButton color="success" onClick={handleSubmit}>
+            Apply
+          </MDButton>
+        )}
+      </>
+    );
+  };
+
+
 
   return (
     <DashboardLayout>
@@ -302,9 +385,9 @@ function Tables() {
               <MDBox pt={3}>
                 <DataTable
                   table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
+                  isSorted={true}
+                  entriesPerPage={true}
+                  showTotalEntries={true}
                   noEndBorder
                 />
               </MDBox>
@@ -393,10 +476,9 @@ function Tables() {
                     <img src={data?.[0]?.photo} alt="Jegan" width="100" height="100" />
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <MDButton color="success" onClick={handleSubmit}>
-                      Apply
-                    </MDButton>
+                    {checkApplyButton()}
                   </Box>
+
                 </Box>
               </DialogContentText>
             </DialogContent>
@@ -440,11 +522,10 @@ function Tables() {
               </Grid>
             </DialogContent>
           </Dialog>
-
         </Grid>
       </MDBox>
       <Footer />
-    </DashboardLayout>
+      </DashboardLayout>
   );
 }
 

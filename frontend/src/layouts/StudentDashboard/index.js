@@ -19,13 +19,13 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DescriptionIcon from '@mui/icons-material/Description';
 
 
-import { useSession } from " SessionContext";
+import { useSession } from "SessionContext";
 import { useState, useEffect } from 'react';
 
 // Your existing code continues here...
 
 function StudentDashboard() {
-  const { name, pass } = useSession();
+  const { name, pass,role } = useSession();
   const [dept, setDept] = useState('');
   const [batch, setBatch] = useState('');
   const [count, setCount] = useState('');
@@ -107,7 +107,9 @@ function StudentDashboard() {
           </Grid>
         </Grid>
       </MDBox>
-
+      <button onClick={()=>{
+          console.log(role)
+      }}>click</button>
     </DashboardLayout>
   );
 }

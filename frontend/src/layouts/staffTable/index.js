@@ -27,8 +27,9 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import InfoIcon from '@material-ui/icons/Info';
 import CheckIcon from '@material-ui/icons/Check';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { useSession } from ' SessionContext';
+import { useSession } from 'SessionContext';
 import { useMediaQuery } from '@mui/material';
+import Swal from 'sweetalert2';
 function StaffTable() {
   const { name, pass } = useSession();
   const [tableData, setTableData] = useState([]);
@@ -72,14 +73,38 @@ function StaffTable() {
   };
 
   const handleAccept = async (uid) => {
-    try {
-      const response = await fetch(`http://localhost:5001/acceptData/${uid}`);
-      const jsondata = await response.json();
-      tableDataFetch();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this request!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, accept it'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await fetch(`http://localhost:5001/acceptData/${uid}`);
+          const jsondata = await response.json();
+          tableDataFetch();
+          Swal.fire(
+            'Deleted!',
+            'Bonafide  has been deleted.',
+            'success'
+          );
+        } catch (error) {
+          console.error('Error deleting data:', error);
+          Swal.fire(
+            'Error!',
+            'An error occurred while deleting the request.',
+            'error'
+          );
+        }
+      }
+    });
   };
+
   const handleView = async (uid) => {
     try {
       const response = await fetch(`http://localhost:5001/particularRow/${uid}`);

@@ -19,7 +19,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DescriptionIcon from '@mui/icons-material/Description';
 // @mui/icons-material components
 import SchoolIcon from '@mui/icons-material/School';
-import { useSession } from ' SessionContext';
+import { useSession } from 'SessionContext';
 import { useState, useEffect } from 'react';
 
 // Your existing code continues here...

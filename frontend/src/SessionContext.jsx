@@ -1,7 +1,7 @@
 // SessionContext.js
 import React, { createContext, useState, useContext } from 'react';
 
-const SessionContext = createContext();
+export const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
   const [name, setName] = useState('');
